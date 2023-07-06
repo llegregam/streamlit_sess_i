@@ -2,22 +2,14 @@
 Session-State interface module
 
 Create class containing the whole sess_i interface. The class contains two subclasses:
-    * Object space: contains the logic for handling tool calculation layer and communication with the widget spaces
-    * Widget space(s): contains the logic for handling data persistency throughout page switching in the GUI
+    * Object space: contains logic for handling data persistency for objects created by the user
+    * Widget space(s): contains the logic for handling data persistency for widgets
 The main class when initialized will automatically generate an object space. Widget spaces will be generated with a
 specific command. This is because while there is only one object space, there can be multiple widget spaces (one for
-each page).
+each page) (MIGHT BE SUBJECT TO CHANGE)
 """
 
-import typing
-
 import streamlit as st
-from pydantic import BaseModel
-
-
-# Object Space
-class ObjectSpace:
-    pass
 
 
 # Widget Space
@@ -60,21 +52,22 @@ class WidgetSpace:
             if str(self.page) in key:
                 self.widgets.update({key: value})
 
+
 class ObjectSpace:
 
     def __init__(self, page, session_state):
-
         self.page = page
         self.session_state = session_state
         self._objects = {}
 
     @property
-    def add_object(self, object):
+    def add_object(self, obj):
         pass
 
-# # Main interface for communicating with object and widget spaces
-# class SessI(BaseModel):
-#
+
+# Main interface for communicating with object and widget spaces
+class SessI:
+    pass
 #     def __int__(self, session_state):
 #
 #         self.session_state = session_state
