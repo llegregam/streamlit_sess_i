@@ -34,6 +34,13 @@ class WidgetSpace:
 
     @classmethod
     def initialize_session(cls, page, session_state):
+        """
+        Initialize the session at the beginning of the page code
+        :param page: page that the widget space handles
+        :param session_state: st.session_state for reading and writting data
+        :return: WidgetSpace object that is situated in the Global widget space inside the session state
+        """
+
         if "Global_Widget_Space" not in session_state.keys():
             space = WidgetSpace(page, session_state)
             session_state["Global_Widget_Space"] = {page: space}
@@ -44,6 +51,10 @@ class WidgetSpace:
             return st.session_state["Global_Widget_Space"][page]
 
     def check_session(self):
+        """
+        Check the session and update widget states at key points throughout the page logic
+        :return:  None
+        """
         if not self.session_state["Global_Widget_Space"][self.page]:
             raise KeyError(
                 f"Widget space for page '{self.page}' not initialized"
