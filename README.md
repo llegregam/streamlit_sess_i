@@ -1,9 +1,6 @@
 # Sess_I
 
-[![PyPI version](https://badge.fury.io/py/physiofit.svg)](https://badge.fury.io/py/physiofit)
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/physiofit.svg)](https://pypi.python.org/pypi/physiofit/)
-[![Documentation Status](https://readthedocs.org/projects/physiofit/badge/?version=latest)](http://physiofit.readthedocs.io/?badge=latest)
-
+[![PyPI version](https://badge.fury.io/py/sess-i.svg)](https://badge.fury.io/py/sess-i)
 
 ## What is Sess_I?
 **A helper package for handling multi-page apps built using [Streamlit](https://streamlit.io/)**
