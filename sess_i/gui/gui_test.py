@@ -1,6 +1,13 @@
 from sess_i.base.main import WidgetSpace
 import streamlit as st
 
+class TestObject:
+
+    def __init__(self, name):
+
+        self.name = name
+
+
 widget_space = WidgetSpace.initialize_session("home", st.session_state)
 obj_test = st.slider(
     key="Page_home_slider",
