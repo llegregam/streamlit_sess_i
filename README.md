@@ -1,3 +1,5 @@
+{::options parse_block_html="true" /}
+
 # Sess_I
 
 [![PyPI version](https://badge.fury.io/py/sess-i.svg)](https://badge.fury.io/py/sess-i)
@@ -30,8 +32,8 @@ import streamlit as st
 from sess_i.base.main import SessI
 
 session = SessI(
-    session_state = st.session state
-    page = "home"
+    session_state=st.session_state
+    page="home"
 )
 ```
 
@@ -62,8 +64,8 @@ import streamlit as st
 from sess_i.base.main import SessI
 
 session = SessI(
-    session_state = st.session state
-    page = "home"
+    session_state = st.session_state
+    page="home"
 )
 
 text_1 = st.text_input(
@@ -90,14 +92,27 @@ widget_default_values = {
     text_1_home : "Hello World"
 }
 
-session.set_widget_default_values(widget_default_values)
+session.set_widget_defaults(widget_default_values)
 
-text_1 = st.text_input(
-    label = "Tutorial",
-    key = "text_1_home",
-    value = session.widget_space["text_1_home"]
+text_1=st.text_input(
+    label="Tutorial",
+    key="text_1_home",
+    value=session.widget_space["text_1_home"]
 )
 ```
+
+<div class="panel panel-info">
+**Note**
+{: .panel-heading}
+<div class="panel-body">
+
+When setting widget default values, registering widgets or registering objects, SessI supports passing in mappings
+(dictionaries) or keyword arguments.
+
+</div>
+</div>
+
+
 
 When your page is done, the next step is to register the widget's and their values for future use. This is what makes 
 it possible to keep widget states when switching between pages:
@@ -109,24 +124,24 @@ import streamlit as st
 from sess_i.base.main import SessI
 
 session = SessI(
-    session_state = st.session state
-    page = "home"
+    session_state=st.session_state
+    page="home"
 )
 
 widget_default_values = {
     "text_1_home" : "Hello World"
 }
 
-session.set_widget_default_values(widget_default_values)
+session.set_widget_defaults(widget_default_values)
 
 text_1 = st.text_input(
-    label = "Tutorial",
-    key = "text_1_home",
-    value = session.widget_space["text_1_home"]
+    label="Tutorial",
+    key="text_1_home",
+    value=session.widget_space["text_1_home"]
 )
   
 session.register_widgets(
-    "text_1_home" = text_1
+    text_1_home = "text_1"
 )
 ```
 
@@ -157,8 +172,8 @@ class Something:
     bar: dict
     
 example = Something(
-    foo = "Hello World",
-    bar = {}
+    foo="Hello World",
+    bar={}
 )
 
 ```
@@ -176,8 +191,8 @@ import streamlit as st
 from sess_i.base.main import SessI
 
 session = SessI(
-    session_state = st.session_state
-    page = "Home"
+    session_state=st.session_state
+    page="Home"
 )
   
 @dataclass
@@ -186,13 +201,13 @@ class Something:
     bar: dict
     
 example = Something(
-    foo = "Hello World",
-    bar = {}
+    foo="Hello World",
+    bar={}
 )
 
 session.register_object(
-    obj = example,
-    key = "example_home"
+    obj=example,
+    key="example_home"
 )
 
 ```
@@ -211,20 +226,20 @@ import streamlit as st
 from sess_i.base.main import SessI
 
 session = SessI(
-    session_state = st.session_state,
-    page = "About"
+    session_state=st.session_state,
+    page="About"
 )
   
 st.write(f"This was the text from the home page:\n{session.widget_space['text_1_home']}")
 
 session.set_widget_defaults(
-    text_2_About = "Welcome to the about page"
+    text_2_About="Welcome to the about page"
 )
 
 text_2 = st.text_intput(
-    label = "example_2",
-    key = "text_2_About",
-    value = session.widget_space["text_2_About"]
+    label="example_2",
+    key="text_2_About",
+    value=session.widget_space["text_2_About"]
 )
   
 session.register_widgets(

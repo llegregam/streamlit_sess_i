@@ -93,10 +93,13 @@ class WidgetSpace:
                 session_state["Global_Widget_Space"].update({page: WidgetSpace(session_state, page)})
             return st.session_state["Global_Widget_Space"][page]
 
-    def set_widget_defaults(self, **kwargs):
+    def set_widget_defaults(self, mapping=None, **kwargs):
 
         if not self.widgets:
-            self.widgets = {key: value for key, value in kwargs.items()}
+            if mapping:
+                self.widgets = mapping
+            else:
+                self.widgets = {key: value for key, value in kwargs.items()}
 
     def register_widgets(self, mapping=None, **kwargs):
         if not self.session_state["Global_Widget_Space"][self.page]:
@@ -122,7 +125,7 @@ class SessI:
                f"Registered Objects = {self.object_space.objects}\n" \
                f"Widgets = {self.widget_space.widgets}"
 
-    def set_widget_defaults(self, **kwargs):
+    def set_widget_defaults(self,mapping=None, **kwargs):
         self.widget_space.set_widget_defaults(**kwargs)
 
     def register_widgets(self, mapping=None, **kwargs):
