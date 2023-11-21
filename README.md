@@ -1,5 +1,3 @@
-{::options parse_block_html="true" /}
-
 # Sess_I
 
 [![PyPI version](https://badge.fury.io/py/sess-i.svg)](https://badge.fury.io/py/sess-i)
@@ -101,18 +99,8 @@ text_1=st.text_input(
 )
 ```
 
-<div class="panel panel-info">
-**Note**
-{: .panel-heading}
-<div class="panel-body">
-
-When setting widget default values, registering widgets or registering objects, SessI supports passing in mappings
+> **_NOTE:_**  The note content.When setting widget default values, registering widgets or registering objects, SessI supports passing in mappings
 (dictionaries) or keyword arguments.
-
-</div>
-</div>
-
-
 
 When your page is done, the next step is to register the widget's and their values for future use. This is what makes 
 it possible to keep widget states when switching between pages:
