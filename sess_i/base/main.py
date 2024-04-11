@@ -20,7 +20,55 @@ On page load:
     2) Else: Initialize session. Initialize widget values from Widget Space stored values.
 """
 
-import streamlit as st
+
+
+class SessI:
+
+    def __init__(self, session_state, page=None):
+        """
+        Initialise session interface object
+        :param session_state: The state of the current session.
+        :param page: The id of the page. If not provided, it defaults to the name of the current file.
+        """
+        self.session_state = session_state
+        self.page = page if page is not None else __file__.split("\\")[-1][:-3]
+        self.object_space = ObjectSpace(self.session_state)
+        self.widget_space = WidgetSpace.initialize_session(self.session_state, self.page)
+
+    def __repr__(self):
+        return f"Page = {self.page}\n" \
+               f"Registered Objects = {self.object_space.objects}\n" \
+               f"Widgets = {self.widget_space.widgets}"
+
+    def set_widget_defaults(self,mapping=None, **kwargs):
+        """
+        Sets the default values for the widgets in the widget space.
+
+        :param mapping: A dictionary containing the default values for the widgets. If not provided, it defaults to None.
+        :param kwargs: The default values for the widgets as keyword arguments.
+        """
+        self.widget_space.set_widget_defaults(mapping, **kwargs)
+
+    def register_widgets(self, mapping=None, **kwargs):
+        """
+        Registers widgets in the widget space.
+
+        :param mapping: A dictionary containing the widgets to be registered. If not provided, it defaults to None.
+        :param kwargs: The widgets to be registered as keyword arguments.
+        """
+        self.widget_space.register_widgets(mapping, **kwargs)
+
+    def register_object(self, obj, key):
+        """
+        Registers an object in the object space.
+
+        :param obj: The object to be registered.
+        :param key: The key associated with the object.
+        """
+        self.object_space[key] = obj
+
+    def get_object(self, key):
+        return self.object_space[key]
 
 
 # Object Space
@@ -31,20 +79,40 @@ class ObjectSpace:
     """
 
     def __init__(self, session_state):
+        """
+        Constructs all the necessary attributes for the ObjectSpace object.
+
+        :param session_state: The state of the session.
+        """
         self.session_state = session_state
-        if "Object_Space" not in self.session_state.keys():
-            self.session_state["Object_Space"] = {}
-        self.objects = self.session_state["Object_Space"]
+        self.objects = self.session_state.setdefault("Object_Space", {})
 
     def __repr__(self):
+        """
+        Returns a string representation of the ObjectSpace object.
+
+        :return: A string representation of the stored objects.
+        """
         return f"Stored objects:\n{self.objects}"
 
     def __getitem__(self, item):
+        """
+        Returns the object associated with the key.
+
+        :param item: The key of the object.
+        :return: The object associated with the key.
+        """
         return self.objects.get(item)
 
     def __setitem__(self, key, value):
-        self.session_state["Object_Space"].update({key: value})
+        """
+        Sets the value of the object associated with the key and updates the session state.
+
+        :param key: The key of the object.
+        :param value: The value of the object.
+        """
         self.objects[key] = value
+        self.session_state["Object_Space"] = self.objects
 
 
 # Widget Space
@@ -59,14 +127,13 @@ class WidgetSpace:
 
         self.page = page
         self.session_state = session_state
-        self.widgets = {}
-
         if "Global_Widget_Space" not in session_state.keys():
             self.session_state["Global_Widget_Space"] = {page: self}
+        self.widgets = {key: value for key, value in session_state.items() if str(self.page) in key}
 
-        for key, value in session_state.items():
-            if str(self.page) in key:
-                self.widgets.update({key: value})
+        # for key, value in session_state.items():
+        #     if str(self.page) in key:
+        #         self.widgets.update({key: value})
 
     def __repr__(self):
         return f"WidgetSpace.widgets({self.widgets})"
@@ -82,60 +149,54 @@ class WidgetSpace:
         :param session_state: streamlit session state
         :return:
         """
-        if page is None:
-            page = __file__.split("\\")[-1][:-3]
-        if "Global_Widget_Space" not in session_state.keys():
-            space = WidgetSpace(session_state, page)
-            session_state["Global_Widget_Space"] = {page: space}
-            return st.session_state["Global_Widget_Space"][page]
-        else:
-            if page not in session_state["Global_Widget_Space"].keys():
-                session_state["Global_Widget_Space"].update({page: WidgetSpace(session_state, page)})
-            return st.session_state["Global_Widget_Space"][page]
+
+        # if page is None:
+        #     page = __file__.split("\\")[-1][:-3]
+        # if "Global_Widget_Space" not in session_state.keys():
+        #     space = WidgetSpace(session_state, page)
+        #     session_state["Global_Widget_Space"] = {page: space}
+        #     return st.session_state["Global_Widget_Space"][page]
+        # else:
+        #     if page not in session_state["Global_Widget_Space"].keys():
+        #         session_state["Global_Widget_Space"].update({page: WidgetSpace(session_state, page)})
+        #     return st.session_state["Global_Widget_Space"][page]
+
+        # Refactored: to test #
+        page = page or __file__.split("\\")[-1][:-3]
+        global_space = session_state.get("Global_Widget_Space", {})
+
+        if page not in global_space:
+            global_space[page] = WidgetSpace(session_state, page)
+
+        session_state["Global_Widget_Space"] = global_space
+        return session_state["Global_Widget_Space"][page]
 
     def set_widget_defaults(self, mapping=None, **kwargs):
-
-        if not self.widgets:
-            if mapping:
-                self.widgets = mapping
-            else:
-                self.widgets = {key: value for key, value in kwargs.items()}
+        """
+        Add default values to widgets in the widget space. If the widget space is empty, initialize it.
+        :param mapping: Widget defaults as key-value pairs. Default is None.
+        :param kwargs: Widget defaults as keyword arguments.
+        :return:
+        """
+        self.widgets = mapping or {key: value for key, value in kwargs.items()} \
+            if not self.widgets else self.widgets
 
     def register_widgets(self, mapping=None, **kwargs):
-        if not self.session_state["Global_Widget_Space"][self.page]:
+        """
+        This method is used to register widgets in the widget space. It updates the widgets dictionary with the provided
+        mapping and keyword arguments. If the widget space for the current page does not exist, it raises a KeyError.
+
+        :param mapping: A dictionary containing widget mappings. Default is None.
+        :param kwargs: Keyword arguments for adding to the mapping of widgets.
+        :raises KeyError: If the widget space for the current page does not exist in the Global_Widget_Space.
+        """
+        # Get specific widget space for the page
+        if not self.session_state["Global_Widget_Space"].get(self.page):
             raise KeyError(
                 f"Widget space for page '{self.page}' doesn't exist."
             )
-        if mapping:
-            self.widgets.update(mapping)
-        if kwargs:
-            self.widgets.update(**kwargs)
-
-
-class SessI:
-
-    def __init__(self, session_state, page=None):
-        self.session_state = session_state
-        self.page = page if page is not None else __file__.split("\\")[-1][:-3]
-        self.object_space = ObjectSpace(self.session_state)
-        self.widget_space = WidgetSpace.initialize_session(self.session_state, self.page)
-
-    def __repr__(self):
-        return f"Page = {self.page}\n" \
-               f"Registered Objects = {self.object_space.objects}\n" \
-               f"Widgets = {self.widget_space.widgets}"
-
-    def set_widget_defaults(self,mapping=None, **kwargs):
-        self.widget_space.set_widget_defaults(**kwargs)
-
-    def register_widgets(self, mapping=None, **kwargs):
-        self.widget_space.register_widgets(mapping, **kwargs)
-
-    def register_object(self, obj, key):
-        self.object_space[key] = obj
-
-    def get_object(self, key):
-        return self.object_space[key]
+        # Update widget space with mapping and kwargs
+        self.widgets.update(mapping or {}, **kwargs)
 
 
 if __name__ == "__main__":
