@@ -27,12 +27,15 @@ class SessI:
         """
         Initialise session interface object
         :param session_state: The state of the current session.
-        :param page: The id of the page. If not provided, it defaults to the name of the current file.
+        :param page: The id of the page. If not provided, it defaults to the
+                     name of the current file.
         """
         self.session_state = session_state
         self.page = page if page is not None else __file__.split("\\")[-1][:-3]
         self.object_space = ObjectSpace(self.session_state)
-        self.widget_space = WidgetSpace.initialize_session(self.session_state, self.page)
+        self.widget_space = WidgetSpace.initialize_session(
+            self.session_state, self.page
+        )
 
     def __repr__(self):
         return f"Page = {self.page}\n" \
@@ -52,7 +55,8 @@ class SessI:
         """
         Registers widgets in the widget space of the current page.
 
-        :param mapping: A dictionary containing the widgets to be registered. If not provided, it defaults to None.
+        :param mapping: A dictionary containing the widgets to be registered.
+                        If not provided, it defaults to None.
         :param kwargs: The widgets to be registered as keyword arguments.
         """
         self.widget_space.register_widgets(mapping, **kwargs)
@@ -73,27 +77,31 @@ class SessI:
         :param key: The key of the object.
         :return: The object associated with the key if it exists, None otherwise.
         """
-        return self.object_space.get(key)
+        return self.object_space[key]
 
     def get_widget(self, key, page=None):
         """
-        Retrieves the value of a widget from the widget space of a designated page. If the page is not provided, it
-        defaults to the current page.
+        Retrieves the value of a widget from the widget space of a designated
+        page. If the page is not provided, it defaults to the current page.
 
         :param key: The key of the widget.
         :param page: The id of the page. If not provided, it defaults to the current page.
         :return: The value of the widget if it exists, None otherwise.
         """
-        widget_space = self.session_state["Global_Widget_Space"].get(page, self.widget_space)
+        widget_space = self.session_state["Global_Widget_Space"].get(
+            page, self.widget_space
+        )
         return widget_space.get(key)
 
 
 # Object Space
 class ObjectSpace:
     """
-    The ObjectSpace class is a container for objects and their data. It provides methods to register objects with
-    specific keys, retrieve objects by their keys, and update the values of objects. The state of the session is stored
-    in the session_state attribute, and the objects are stored in the objects attribute, which is a dictionary.
+    The ObjectSpace class is a container for objects and their data. It
+    provides methods to register objects with specific keys, retrieve
+    objects by their keys, and update the values of objects. The state of
+    the session is stored in the session_state attribute, and the objects
+    are stored in the objects attribute, which is a dictionary.
     """
 
     def __init__(self, session_state):
@@ -160,12 +168,15 @@ class WidgetSpace:
         """
         Initialize widget space and add it to the Global Space.
 
-        This method initializes a widget space for a given page and adds it to the Global Space in the session state.
-        If the page is not provided, it defaults to the name of the current file. If the Global Space does not exist,
-        it is created. If the widget space for the given page does not exist in the Global Space, it is created.
+        This method initializes a widget space for a given page and adds it
+        to the Global Space in the session state. If the page is not
+        provided, it defaults to the name of the current file. If the Global
+        Space does not exist, it is created. If the widget space for the
+        given page does not exist in the Global Space, it is created.
 
         :param session_state: The state of the current session.
-        :param page: The id of the page. If not provided, it defaults to the name of the current file.
+        :param page: The id of the page. If not provided, it defaults
+                     to the name of the current file.
         :return: The widget space for the given page.
         """
 
@@ -204,12 +215,15 @@ class WidgetSpace:
 
     def register_widgets(self, mapping=None, **kwargs):
         """
-        This method is used to register widgets in the widget space. It updates the widgets dictionary with the provided
-        mapping and keyword arguments. If the widget space for the current page does not exist, it raises a KeyError.
+        This method is used to register widgets in the widget space. It
+        updates the widgets dictionary with the provided mapping and keyword
+        arguments. If the widget space for the current page does not exist,
+        it raises a KeyError.
 
         :param mapping: A dictionary containing widget mappings. Default is None.
         :param kwargs: Keyword arguments for adding to the mapping of widgets.
-        :raises KeyError: If the widget space for the current page does not exist in the Global_Widget_Space.
+        :raises KeyError: If the widget space for the current page does not
+                          exist in the Global_Widget_Space.
         """
         widget_space = self.session_state["Global_Widget_Space"].get(self.page)
         if widget_space is None:
