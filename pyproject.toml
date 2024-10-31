@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sess-i"
-version = "0.2.0"
+version = "0.2.1"
 description = "A helper package for handling multi-page apps built using Streamlit"
 authors = ["llegregam <legregam@insa-toulouse.fr>"]
 license = "GNU General Public License v3 or later (GPLv3+)"

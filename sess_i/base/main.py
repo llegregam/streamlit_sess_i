@@ -91,7 +91,7 @@ class SessI:
         widget_space = self.session_state["Global_Widget_Space"].get(
             page, self.widget_space
         )
-        return widget_space.get(key)
+        return widget_space[key]
 
 
 # Object Space
